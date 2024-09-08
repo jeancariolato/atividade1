@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'home_page.dart'; // Importa o arquivo home_page.dart
 
 void main() {
   runApp(const MyApp());
@@ -14,30 +14,22 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: DefaultTabController(
-        length: 2, // Número de abas
+        length: 1, // Número de abas
         child: Scaffold(
-          //BACKGROUND
           backgroundColor: Colors.black,
-
           appBar: const TabBar(
             dividerColor: Colors.transparent,
-            //ALTERAR CORES DA TAB BAR
             indicatorWeight: 2,
             labelColor: Color.fromARGB(255, 255, 255, 255),
             unselectedLabelColor: Color.fromARGB(255, 94, 94, 94),
             indicatorColor: Color.fromARGB(255, 255, 255, 255),
             tabs: [
               Tab(text: "Login"),
-              Tab(text: "Sign Up"),
             ],
           ),
-
-          body: TabBarView(
+          body: const TabBarView(
             children: [
-              // Primeira aba - Conteúdo Login
               LoginPage(),
-              // Segunda aba - Conteúdo Sign Up
-              SignUpPage(),
             ],
           ),
         ),
@@ -47,18 +39,54 @@ class MyApp extends StatelessWidget {
 }
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
+  // Variável para armazenar o nome de usuário
   bool _obscureText = true;
+  String username = '';
+  String password = '';
+
+  // Controladores
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   void _togglePasswordVisibility() {
     setState(() {
       _obscureText = !_obscureText;
     });
   }
+
+//metodo de login
+ void _login() {
+  if (_usernameController.text.isEmpty) {
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Por favor, insira um nome de usuário!')),
+    );
+  } else if (_passwordController.text == '1234') {
+    
+    setState(() {
+      username = _usernameController.text;
+    });
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HomePage(username: username), // Navega para a HomePage
+      ),
+    );
+  } else {
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Senha incorreta!')),
+    );
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -67,42 +95,37 @@ class _LoginPageState extends State<LoginPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          //CARREGAR IMAGEM
-          const SizedBox(height: 200),
+          const SizedBox(height: 100),
           Padding(
-            padding: const EdgeInsets.only(left: 40),
+            padding: const EdgeInsets.only(left: 15),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Image.asset(
-                  "images/logo.png",
-                  width: 65,
-                  fit: BoxFit.cover,
-                ),
-                SizedBox(height: 25),
-                Text(
-                  "Bem-vindo ao ActivityOne!",
-                  style: GoogleFonts.nunitoSans(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
+                Center(
+                  child: Container(
+                    child: CircleAvatar(
+                      backgroundColor: const Color.fromARGB(255, 48, 48, 48),
+                      radius: 50,
+                      backgroundImage: AssetImage('images/logo.png'),
+                    ),
                   ),
-                  textAlign: TextAlign.left,
                 ),
               ],
             ),
           ),
           const SizedBox(height: 35),
-          //CAMPO DE TEXTO 1
           SizedBox(
             width: 300,
             height: 40,
-            child: const TextField(
-              style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
-              decoration: InputDecoration(
+            child: TextField(
+              controller:
+                  _usernameController, // Controle do campo de nome de usuário
+              style: const TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
+              decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.people_alt),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color.fromARGB(255, 255, 255, 255)),
+                  borderSide:
+                      BorderSide(color: Color.fromARGB(255, 255, 255, 255)),
                 ),
                 labelText: "Usuário",
                 floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -111,15 +134,15 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           const SizedBox(height: 35),
-          //CAMPO DE TEXTO 2
           SizedBox(
             width: 300,
             height: 40,
             child: TextField(
+              controller: _passwordController, // Controle do campo de senha
               obscureText: _obscureText,
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                prefixIcon: Icon(Icons.lock),
+                prefixIcon: const Icon(Icons.lock),
                 suffixIcon: IconButton(
                   icon: Icon(
                     _obscureText ? Icons.visibility_off : Icons.visibility,
@@ -127,12 +150,13 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   onPressed: _togglePasswordVisibility,
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color.fromARGB(255, 255, 255, 255)),
+                focusedBorder: const OutlineInputBorder(
+                  borderSide:
+                      BorderSide(color: Color.fromARGB(255, 255, 255, 255)),
                 ),
                 labelText: "Senha",
                 floatingLabelBehavior: FloatingLabelBehavior.never,
-                contentPadding: EdgeInsets.symmetric(vertical: 16.0),
+                contentPadding: const EdgeInsets.symmetric(vertical: 16.0),
               ),
             ),
           ),
@@ -145,18 +169,18 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               backgroundColor: WidgetStatePropertyAll(
-                Color.fromARGB(255, 255, 255, 255),
+                const Color.fromARGB(255, 255, 255, 255),
               ),
               foregroundColor: WidgetStatePropertyAll(
-                Color.fromARGB(255, 0, 0, 0),
+                const Color.fromARGB(255, 0, 0, 0),
               ),
             ),
-            onPressed: () {},
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(100.0, 15.0, 100.0, 15.0),
+            onPressed: _login, // Função de login
+            child: const Padding(
+              padding: EdgeInsets.fromLTRB(100.0, 15.0, 100.0, 15.0),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Icon(Icons.login),
                   SizedBox(width: 8),
                   Text(
@@ -168,94 +192,6 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class SignUpPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(35),
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(height: 170),
-              Text(
-                'Vamos começar o seu cadastro.',
-                style: GoogleFonts.nunitoSans(
-                  fontSize: 32,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              //CAMPO NOME COMPLETO
-              SizedBox(height: 15),
-              TextField(
-                decoration: InputDecoration(
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color.fromARGB(255, 255, 255, 255)),
-                  ),
-                  labelText: "Nome completo",
-                ),
-              ),
-              SizedBox(height: 15),
-              TextField(
-                decoration: InputDecoration(
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color.fromARGB(255, 255, 255, 255)),
-                  ),
-                  labelText: "Email",
-                ),
-              ),
-              SizedBox(height: 15),
-              TextField(
-                decoration: InputDecoration(
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color.fromARGB(255, 255, 255, 255)),
-                  ),
-                  labelText: "CPF",
-                ),
-              ),
-              SizedBox(height: 15),
-              TextField(
-                decoration: InputDecoration(
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color.fromARGB(255, 255, 255, 255)),
-                  ),
-                  labelText: "Nova senha",
-                ),
-              ),
-              SizedBox(height: 25),
-              ElevatedButton(
-                onPressed: () {},
-                style: ButtonStyle(
-                  shape: WidgetStatePropertyAll(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(85.0, 10.0, 85.0, 10.0),
-                  child: Row(
-                    children: [
-                      Text(
-                        "Prosseguir",
-                        style: TextStyle(fontSize: 13, color: Colors.black),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
